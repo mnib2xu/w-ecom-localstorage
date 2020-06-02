@@ -1,0 +1,43 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.gifteeForm {
+  display:flex;
+
+}
+
+.items {
+  display:flex;
+}
+
+.productPage {
+  margin: 10px 40px;
+  border: solid black 1px;
+  padding: 40px;
+}
+
+.cart {
+  height: 300px;
+  margin-top: 50px;
+  border: solid black 1px;
+  padding: 40px;
+}
+
+.w-commerce-commercecartlist {
+  display: flex;
+}
+
+.w-commerce-commercecartproductname {
+  height:150px;
+  width:150px;
+  text-align: center;
+  margin:10px;
+  padding: 20px;
+  border: solid black 1px;
+}
