@@ -22,18 +22,18 @@ a {
   padding: 40px;
 }
 
-.cart {
-  height: 300px;
+.cart, .checkout {
+  height: 230px;
   margin-top: 50px;
   border: solid black 1px;
   padding: 40px;
 }
 
-.w-commerce-commercecartlist {
+.w-commerce-commercecartlist, .w-commerce-commercecheckoutorderitemslist {
   display: flex;
 }
 
-.w-commerce-commercecartproductname {
+.w-commerce-commercecartproductname, .w-commerce-commerceboldtextblock {
   height:150px;
   width:150px;
   text-align: center;

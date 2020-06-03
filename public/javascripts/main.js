@@ -1,9 +1,7 @@
 window.onload = function () {
 
     const orderData = {
-        'Bola Halo': [],
-        'Cielo': [],
-        'Circa': []
+        'Cielo': []
     }
 
     // Update Local Storage
@@ -28,6 +26,23 @@ window.onload = function () {
         updateLocalStorage()
     }
 
+    // Append Giftees at the right productOrder
+    insertGifteeHTML = function (itemsInView) {
+        let i;
+        for (i = 0; i < itemsInView.length; i++) {
+            if (itemsInView[i].innerText !== '' && orderData[itemsInView[i].innerText] !== []) {
+                JSON.parse(localStorage.getItem("orderData"))[itemsInView[i].innerText].forEach((x) => {
+                    itemsInView[i].insertAdjacentHTML('afterend', `
+                    <div class="cartGiftee" style="display:flex;">
+                        <p style="margin:4px;">${x.name} ${x.email}</p>
+                    </div>
+                    `
+                    )
+                })
+            }
+        }
+    }
+
     // Add orderdata
     document.getElementById("addGiftee").onclick = function () {
         const gifteeName = document.getElementById("gifteeName").value;
@@ -38,10 +53,16 @@ window.onload = function () {
 
         // Add order to Array Object
         if (gifteeName.length > 1 && gifteeEmail.includes("@")) {
+
             const singleOrder = {
                 'name': gifteeName,
                 'email': gifteeEmail
             }
+
+            if (orderData[productTitle] === undefined) {
+                orderData[productTitle] = [];
+            }
+
             orderData[productTitle].push(singleOrder);
             document.getElementById("gifteeList").innerHTML = '';
             if (orderData[productTitle].length >= 1) {
@@ -69,50 +90,34 @@ window.onload = function () {
         updateLocalStorage()
     }
 
-
-
     // Add to Cart / Update
     document.getElementById("add-to-cart").onclick = function () {
-        localStorage.setItem("orderData", JSON.stringify(orderData));
-
-        let itemsInCartView = document.getElementsByClassName('w-commerce-commercecartproductname');
-
+        updateLocalStorage();
         updateCartQuantity();
         $('.cartGiftee').remove();
 
-        let i;
-        for (i = 0; i < itemsInCartView.length; i++) {
-            if (itemsInCartView[i].innerText !== '' && orderData[itemsInCartView[i].innerText] !== []) {
-                orderData[itemsInCartView[i].innerText].forEach((x) => {
-                    itemsInCartView[i].insertAdjacentHTML('afterend', `
-                    <div class="cartGiftee" style="display:flex;">
-                        <p style="margin:4px;">${x.name} ${x.email}</p>
-                    </div>
-                    `
-                    )
-                })
-            }
-        }
-        updateLocalStorage();
+        let itemsInCartView = document.getElementsByClassName('w-commerce-commercecartproductname');
+        insertGifteeHTML(itemsInCartView);
+
+        let itemsInCheckoutView = document.getElementsByClassName('w-commerce-commerceboldtextblock');
+        insertGifteeHTML(itemsInCheckoutView);
     }
 
+    // Continue to Checkout button
+    document.getElementById("continueToCheckout").onclick = function () {
+        updateLocalStorage();
+        updateCartQuantity();
+        $('.cartGiftee').remove();
 
+        let itemsInCartView = document.getElementsByClassName('w-commerce-commercecartproductname');
+        insertGifteeHTML(itemsInCartView);
+
+        let itemsInCheckoutView = document.getElementsByClassName('w-commerce-commerceboldtextblock');
+        insertGifteeHTML(itemsInCheckoutView);
+    }
 
     // Cart open link (Cart / Go to Cart)
     document.querySelector(".w-commerce-commercecartopenlink").onclick = function () {
 
     }
 }
-
-// w-commerce-commercecartlist
-// w-commerce-commercecartproductname
-
-// JSON.parse(localStorage.getItem("orderData"))
-
-// itemsInOrder.forEach((x) => {
-//     console.log(JSON.parse(localStorage.getItem("orderData"))[x.innerText]);
-//     if ((JSON.parse(localStorage.getItem("orderData"))[x.innerText]) !== []) {
-
-//     }
-//     debugger;
-// })
