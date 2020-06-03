@@ -6,7 +6,27 @@ window.onload = function () {
         'Circa': []
     }
 
-    // If there we are on the page with an order class or id, and an order is placed on that order, then right below the class it should display a list or names on that order.
+    // Update Local Storage
+    updateLocalStorage = function () {
+        localStorage.setItem("orderData", JSON.stringify(orderData))
+        JSON.parse(localStorage.getItem("orderData"))
+    }
+
+    // Empty InputFields
+    clearInputFields = function () {
+        document.getElementById("gifteeName").value = null;
+        document.getElementById("gifteeEmail").value = null;
+    }
+
+    // Update Cart Quantity
+    updateCartQuantity = function () {
+        let cartQuantityArray = document.getElementsByClassName("CartQuantity");
+        for (i=0; i < cartQuantityArray.length; i++) {
+            let productTitle = cartQuantityArray[i].parentElement.firstElementChild.innerText
+            document.getElementsByClassName("CartQuantity")[i].value = orderData[productTitle].length
+        }
+        updateLocalStorage()
+    }
 
     // Add orderdata
     document.getElementById("addGiftee").onclick = function () {
@@ -14,7 +34,7 @@ window.onload = function () {
         const gifteeEmail = document.getElementById("gifteeEmail").value;
         const list = document.getElementById("gifteeList");
 
-        const productTitle = document.getElementsByClassName("size1-text")[1].innerText
+        const productTitle = document.getElementsByClassName("size1-text")[0].innerText
 
         // Add order to Array Object
         if (gifteeName.length > 1 && gifteeEmail.includes("@")) {
@@ -35,39 +55,37 @@ window.onload = function () {
             }
             document.getElementById("quantity-4b15c280ea11e6a3b92d522c3eec69df").value = orderData[productTitle].length;
         }
-
-        // Clear input fields
-        document.getElementById("gifteeName").value = null;
-        document.getElementById("gifteeEmail").value = null;
+        clearInputFields();
     }
 
     // Clearing the Data
     document.getElementById("clearList").onclick = function () {
-        let productTitle = document.getElementById("quantity-4b15c280ea11e6a3b92d522c3eec69df");
+        let productTitle = document.getElementsByClassName("size1-text")[0].innerText;
+        let productQuantity = document.getElementById("quantity-4b15c280ea11e6a3b92d522c3eec69df");
         document.getElementById("gifteeList").innerHTML = '';
         orderData[productTitle] = [];
-        productTitle.value = orderData[productTitle].length;
-        document.getElementById("gifteeName").value = null;
-        document.getElementById("gifteeEmail").value = null;
+        productQuantity.value = orderData[productTitle].length;
+        clearInputFields()
+        updateLocalStorage()
     }
 
-    // Add to Cart
+
+
+    // Add to Cart / Update
     document.getElementById("add-to-cart").onclick = function () {
-        debugger
-        localStorage.setItem("orderData", JSON.stringify(orderData));
-    }
-
-    // Cart open link (Cart / Go to Cart)
-    document.querySelector(".w-commerce-commercecartopenlink").onclick = function () {
         localStorage.setItem("orderData", JSON.stringify(orderData));
 
-        let itemsInOrder = document.getElementsByClassName('w-commerce-commercecartproductname');
+        let itemsInCartView = document.getElementsByClassName('w-commerce-commercecartproductname');
+
+        updateCartQuantity();
+        $('.cartGiftee').remove();
+
         let i;
-        for (i = 0; i < itemsInOrder.length; i++) {
-            if (itemsInOrder[i].innerText !== '') {
-                JSON.parse(localStorage.getItem("orderData"))[itemsInOrder[i].innerText].forEach((x) => {
-                    itemsInOrder[i].insertAdjacentHTML('beforeend', `
-                    <div style="display:flex;">
+        for (i = 0; i < itemsInCartView.length; i++) {
+            if (itemsInCartView[i].innerText !== '' && orderData[itemsInCartView[i].innerText] !== []) {
+                orderData[itemsInCartView[i].innerText].forEach((x) => {
+                    itemsInCartView[i].insertAdjacentHTML('afterend', `
+                    <div class="cartGiftee" style="display:flex;">
                         <p style="margin:4px;">${x.name} ${x.email}</p>
                     </div>
                     `
@@ -75,12 +93,21 @@ window.onload = function () {
                 })
             }
         }
+        updateLocalStorage();
+    }
+
+
+
+    // Cart open link (Cart / Go to Cart)
+    document.querySelector(".w-commerce-commercecartopenlink").onclick = function () {
+
     }
 }
 
 // w-commerce-commercecartlist
 // w-commerce-commercecartproductname
 
+// JSON.parse(localStorage.getItem("orderData"))
 
 // itemsInOrder.forEach((x) => {
 //     console.log(JSON.parse(localStorage.getItem("orderData"))[x.innerText]);
