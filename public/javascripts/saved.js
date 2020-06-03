@@ -3,10 +3,10 @@ window.onload = function () {
     const orderDataUnique = {}
 
     // Update Local Storage
-    updateLocalStorage = function () {
+    updateLocalStorage = function (orderDataUnique) {
         localStorage.setItem("orderDataUnique", JSON.stringify(orderDataUnique))
         JSON.parse(localStorage.getItem("orderDataUnique"))
-        // console.log(JSON.parse(localStorage.getItem("orderDataUnique")))
+        console.log(JSON.parse(localStorage.getItem("orderDataUnique")))
     }
 
     // Empty InputFields
@@ -17,64 +17,39 @@ window.onload = function () {
 
     // Update Cart Quantity
     updateCartQuantity = function () {
+        setTimeout(function(){
             let cartQuantityArray = document.getElementsByClassName("cartquantity");
+
+            console.log(document.getElementsByClassName("cartquantity")[0].value)
+
             for (i=0; i < cartQuantityArray.length; i++) {
-                let productTitle = '';
-
-                // CartList Producttitle Targeting
-                if (cartQuantityArray[i].parentElement.children[1].children[0] !== undefined) {
-                    productTitle = cartQuantityArray[i].parentElement.children[1].children[0].innerText
-                }
-
-                if (orderDataUnique[productTitle] !== undefined) {
+                let productTitle = cartQuantityArray[i].parentElement.firstElementChild.innerText
+    
+                // if (orderDataUnique[productTitle] !== undefined) {
                     document.getElementsByClassName("cartquantity")[i].value = orderDataUnique[productTitle].length
-                    $(".cartquantity")[i].focus();
-                    const ke = new KeyboardEvent("keydown", {
-                        bubbles: true, cancelable: true, keyCode: 13
-                    });
-                    document.body.dispatchEvent(ke);
-                }
+                // }
             }
-    }
-
-    // Update Checkout Quantity
-    updateCheckoutQuantity = function () {
-        let checkoutquantityArray = document.getElementsByClassName("checkoutquantity");
-        for (i=0; i < checkoutquantityArray.length; i++) {
-            let productTitle = '';
-
-
-            // CartList Producttitle Targeting
-            if (checkoutquantityArray[i].parentElement.firstElementChild !== undefined) {
-                productTitle = checkoutquantityArray[i].parentElement.firstElementChild.innerText
-            }
-
-            if (orderDataUnique[productTitle] !== undefined) {
-                document.getElementsByClassName("checkoutquantity")[i].value = orderDataUnique[productTitle].length
-            }
-        }
+            updateLocalStorage(orderDataUnique)
+        },3000);
     }
 
     // Append Giftees at the right productOrder
     insertGifteeHTML = function (itemsInView) {
-        setTimeout(() => {
-            let i;
-            for (i = 0; i < itemsInView.length; i++) {
-                if (itemsInView[i].innerText !== '' && orderDataUnique[itemsInView[i].innerText] !== []) {
-                    if (orderDataUnique[itemsInView[i].innerText] !== undefined) {
-                        JSON.parse(localStorage.getItem("orderDataUnique"))[itemsInView[i].innerText].forEach((x) => {
-                            itemsInView[i].insertAdjacentHTML('afterend', `
-                            <div class="cartGiftee" style="display:flex;">
-                                <p style="margin:4px;">${x.name} ${x.email}</p>
-                            </div>
-                            `
-                            )
-                        })
-                    }
+        let i;
+        for (i = 0; i < itemsInView.length; i++) {
+            if (itemsInView[i].innerText !== '' && orderDataUnique[itemsInView[i].innerText] !== []) {
+                if (orderDataUnique[itemsInView[i].innerText] !== undefined) {
+                    JSON.parse(localStorage.getItem("orderDataUnique"))[itemsInView[i].innerText].forEach((x) => {
+                        itemsInView[i].insertAdjacentHTML('afterend', `
+                        <div class="cartGiftee" style="display:flex;">
+                            <p style="margin:4px;">${x.name} ${x.email}</p>
+                        </div>
+                        `
+                        )
+                    })
                 }
             }
-            updateCartQuantity()
-        }, 1000);
+        }
     }
 
     // Add orderDataUnique
@@ -127,34 +102,35 @@ window.onload = function () {
 
     // Add to Cart / Update
     document.getElementById("add-to-cart").onclick = function () {
-        updateLocalStorage();
+        updateLocalStorage(orderDataUnique);
+
+        debugger
         updateCartQuantity();
-        updateCheckoutQuantity();
 
         $('.cartGiftee').remove();
 
         let itemsInCartView = document.getElementsByClassName('w-commerce-commercecartproductname');
-
         insertGifteeHTML(itemsInCartView);
 
         let itemsInCheckoutView = document.getElementsByClassName('w-commerce-commerceboldtextblock');
-
         insertGifteeHTML(itemsInCheckoutView);
     }
 
     // Continue to Checkout button
     document.getElementById("continueToCheckout").onclick = function () {
-        updateLocalStorage();
+        updateLocalStorage(orderDataUnique);
         updateCartQuantity();
-        updateCheckoutQuantity();
-
         $('.cartGiftee').remove();
-
 
         let itemsInCartView = document.getElementsByClassName('w-commerce-commercecartproductname');
         insertGifteeHTML(itemsInCartView);
 
         let itemsInCheckoutView = document.getElementsByClassName('w-commerce-commerceboldtextblock');
         insertGifteeHTML(itemsInCheckoutView);
+    }
+
+    // Cart open link (Cart / Go to Cart)
+    document.querySelector(".w-commerce-commercecartopenlink").onclick = function () {
+
     }
 }
